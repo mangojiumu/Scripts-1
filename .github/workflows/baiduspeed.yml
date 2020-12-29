@@ -23,7 +23,7 @@ jobs:
           node-version: 12.x
       - name: npm install
         run: |
-          cd ~/Scripts-1
+          cd ~/Scripts
           npm install
       - name: '运行 【百度极速】'
         if: env.BAIDU_COOKIE
