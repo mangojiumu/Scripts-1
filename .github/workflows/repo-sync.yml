@@ -26,8 +26,7 @@ jobs:
         with:
           source_repo: "https://github.com/simple202/Scripts-1.git"
           source_branch: "master"
-         destination_repo: "git@https://github.com/mangojiumu/Scripts-1"
-          destination_branch: "master"
+          destination_branch: "git@master"
           github_token: ${{ secrets.PAT }}
       # 我自己同步到gitee使用，其他人可忽略
       - name: sync github -> gitee
