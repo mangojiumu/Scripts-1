@@ -1,167 +1,80 @@
-/*
-更新时间: 2021-02-16 15:00
-Github Actions使用方法见[@lxk0301](https://raw.githubusercontent.com/lxk0301/scripts/master/githubAction.md) 使用方法大同小异
 
-请自行抓包，阅读文章和看视频，倒计时转一圈显示青豆到账即可，多看几篇文章和视频，获得更多包数据，抓包地址为"https://ios.baertt.com/v5/article/complete.json"，在Github Actions中的Secrets新建name为'YOUTH_READ'的一个值，拷贝抓包的请求体到下面Value的文本框中，添加的请求体越多，获得青豆次数越多，本脚本不包含任何推送通知
 
-多个请求体时用'&'号或者换行隔开" ‼️
+const $ = new Env("中青看点")
 
-*/
+let headers = "";
 
-const $ = new Env("中青看点阅读")
-//const notify = $.isNode() ? require('./sendNotify') : '';
-let ReadArr = [], timebodyVal ="";
-let YouthBody = $.getdata('youth_autoread')||$.getdata("zqgetbody_body");
-let artsnum = 0, videosnum = 0;
-let videoscore = 0,readscore = 0;
-if (isGetbody = typeof $request !==`undefined`) {
-   Getbody();
-   $done()
-} 
-let lastIndex = $.getdata('zqbody_index')
-if(!$.isNode()&&!YouthBody==true){
-  $.log("您未获取阅读请求，请求阅读后获取")
-  $.msg($.name, "您未获取阅读请求，请求阅读后获取","",{'open-url':"https://kandian.youth.cn/u/8S9DO"})
- return
- } else if (!$.isNode() && YouthBody.indexOf("&") == -1) {
-  ReadArr.push(YouthBody)
- } else {
-  if ($.isNode()) {
-    YouthBody = 'p=9NwGV8Ov71o%3DgW5NEpb6rjb84bkaCQyOq-myT0C-Ktb_pYgxM135XoUfaIpfBqAxRGnFAl1k71C_zMPfUdFlHJTcuxYW9LgBCdTzuda7fnA8r2K-D8AqSYWzt-6LIEcC8SPkaeAgjjv1iCeYI_yckjGbVxJEy1xSQc4qp-_g8cJecymP34l6mTdhrAFOGFSilTZLFPqCU_7ljMkOcqw8aw9ACCV1tABKy-K4-Jg7iuN14D9ZxcCkpLQuoyscNUu6dpYc_XmDxz3fkIw0zSfLQpoP5AeJcWa9ZaOyP80RFczostT5m9rOkTS75T16yo19ENeipLWfV6z_6twua12DkixV6nea-ih2e2b3ni2lZPoph3SvQ0EXVIV6YJpG55pX5_odY3r7rWFgXUlSwEbNdny5oNdJwCKU2n_8_KleKPtPiKrrsorLIfc2ny8Hn1-N3Aexu5NveNhMXkWzTt8bLTz-wwNhLjcHBJ7rrw2XNHWWKh2kXs2QzK3XhWLstUsTxokg0y9U2Vo0ja0YreHpc7i7ckIj1DosKvS-HbdkXFS4sBmkVn9fubetysH99qAmZKy8GA8JNynZPDKf8DUkMsbFJRI_mHBxlsYQQP8bXgp6DNYuH3m7pIXH_w0dGJ5ur4Zp4tz1vJtG5o1_yFrc2TNjBiGevI30y1FcN1p6wHqEJjAoDChj9JT6nhnR5B6gh6bGlqe1ABZauVd4EYyYSD_TO3BORwyMjLfwPPsD5ASnZDlP8K_rnbw8xBH9GhBGVTE5wFjl6pw8HDvpCyPql6d6CDB7HUGULRw8b3N9Dk30UTawKdTyukx7qcBtF3EKNk7D2nGGJ6CGqKf9JjxMA5Y%3D&p=9NwGV8Ov71o%3DgW5NEpb6rjb84bkaCQyOq-myT0C-Ktb_pYgxM135XoUfaIpfBqAxRGnFAl1k71C_zMPfUdFlHJTcuxYW9LgBCdTzuda7fnA8r2K-D8AqSYWzt-6LIEcC8SPkaeAgjjv1iCeYI_yckjGbVxJEy1xSQc4qp-_g8cJecymP34l6mTdhrAFOGFSilTZLFPqCU_7ljMkOcqw8aw9ACCV1tABKy-K4-Jg7iuN14D9ZxcCkpLQuoyscNUu6dpYc_XmDxz3fkIw0zSfLQpqnHFpqJzFudIgdIEJI88S2W5yGoGea-9xyK3ELSLl2NN5tyjwfxLHHHxvbFw43zzInE0OtDgG_djqCUlhgjgCD3SlJRApFHSKCDQcGG71hKup5rUhN9uaxaiWnCJ39hxjnH1zSoGfd9QtFQ-e6eUw5pirXhUgQgzKcqunOItBt9U646z3u92z_-HcjszpfKezoXqqHi7aMq6Gr245sjGmeFPB4d-anMlu4mAPhYRxKoah2izqsF0VkMmxiOdXrks_XX9DDFTFQIiPHq_93iO4QWF5T48ONju_jKew_TWq9aj2mdcnNsln0Yeyi8n68PN_3oKP0DIybe18PNq2HrQ9IQ9SgOVbjNYDQsKgXK2yZJEIRoWA-VjB2V4YoEVS-sCdGemmC-elysPp2VGUG2f4EcX4A9cImctra_v77SAL8kqaFgTsV5wMdpOjYg_iDWAhYetHhzqeDmK49LNLKZHuRjhU7FKgD3zWJhuhIJXnO_-zPjKN2EFfsZR5iYJnGfG4kInusByjH1gbY513p49arsdbEA0oatIy6GRWvRbJApdZgjPHvWF-HOosO6EmM3O4%3D&p=9NwGV8Ov71o%3DgW5NEpb6rjb84bkaCQyOq-myT0C-Ktb_pYgxM135XoUfaIpfBqAxRGnFAl1k71C_zMPfUdFlHJTcuxYW9LgBCdTzuda7fnA8r2K-D8AqSYWzt-6LIEcC8SPkaeAgjjv1iCeYI_yckjGbVxJEy1xSQc4qp-_g8cJecymP34l6mTdhrAFOGFSilTZLFPqCU_7ljMkOcqw8aw9ACCV1tABKy-K4-Jg7iuN14D9ZxcCkpLQuoyscNUu6dpYc_XmDxz3fkIw0zSfLQprplflANgs20PhXyXSvCHAJhzql76lOWWjKV0EOOBHO3VS55q7-aSF91KbgxrnvZ0aibKlWKatIATnm8KZuQbbtcP20bTiMyKfXbgS9LjeA_kLlAgeyF26gK-lRiHjjuDrJHyinqdKxEB8IxZtMQGGRHqjYudjamMyvWzJhEWgVrHVaY-j_sgTqDgmWzTYQYGwTRsvk7yWmagjq4E_bPZpzn9D1dEnl0kDRk0kgurEWfSsjwOzzEvsWJQXcVktmNqVnQ1oDuHf3bLCGw3sNFculpHys312HRL0oDVfmlFvjju5DUXd43qjjPkQ7vuOIru1SsvgI0Yp54T2wuN3hC34zpLaqjMuDDe4Wi0_oL89D8kvykw01pVrNpnrib0KwHupOkvtIAYGZkUyAcu7kVK0Ry8utyV6yZhhCr-Jm9yOceMKlbD4I9Oi9sTIRY3ZFkd8yVKdYTT8TTQPhblotxzZGNSmNMR3RJfAVHf99TZtUAxSAHSu3Y9i_YMGkUaafDhUHnlrT80UKkiXkxoBKczqLoY0mqdVWZxVG0Gns1cGmk8750z63kzEktLDvfdUk90E%3D&p=9NwGV8Ov71o%3DgW5NEpb6rjb84bkaCQyOq-myT0C-Ktb_pYgxM135XoUfaIpfBqAxRGnFAl1k71C_zMPfUdFlHJTcuxYW9LgBCdTzuda7fnA8r2K-D8AqSYWzt-6LIEcC8SPkaeAgjjv1iCeYI_yckjGbVxJEy1xSQc4qp-_g8cJecymP34l6mTdhrAFOGFSilTZLFPqCU_7ljMkOcqw8aw9ACCV1tABKy-K4-Jg7iuN14D9ZxcCkpLQuoyscNUu6dpYc_XmDxz3fkIw0zSfLQpo4569uMTE_du6k3Rr_X_NDIdeskVkefR-5pbMLz3e5_EVlxDxlwD_wweuZS4kGlm8ejZ-GIeUA_nCFbUYFI4mD-9Y5xjdFAz5yKWWVd0_2QA4UpzkPYVYS3cjRJiLCLev-7KcYWFXRckfG3_eRiKnJ8giNZLI7BiIc9oCobrtPmXqyAoe839k7fo5xIl29dbrDVJcxHl10u-anncR2qRVYJne53zUN0veD9rB1qUP-olLwsttc10pCC_h8YkpaXSwdZKmHuzHzBFOmrRzrHIR-yEvUullBAc_pn17gTJ3-_Eb8BrJpt5nxOPndDzXzP3B-dsp0YXcoWgUHHbql5kzfvuY3tWQe_SNWAfgN89CEQoYv8cD2-ygbZvTs-AcmmmwzJy_s6cGWZmIAFfw2UjtO168Onk5VPewOZht59G-vmIvUWIpRvRMR6QZJYppyzYlSx9fxLM2eOqDNzsiq0-ZOj14qTLaEj30rEl9aKbom7zau8gdEatEhXePeFWmBQebZqF_VZSlITij3-SjSJuNzaz00fhm5DbwpzamHt1nynv70YWCpN-FsY0bI7xUJILw%3D&p=9NwGV8Ov71o%3DgW5NEpb6rjb84bkaCQyOq-myT0C-Ktb_pYgxM135XoUfaIpfBqAxRGnFAl1k71C_zMPfUdFlHJTcuxYW9LgBCdTzuda7fnA8r2K-D8AqSYWzt-6LIEcC8SPkaeAgjjv1iCeYI_yckjGbVxJEy1xSQc4qp-_g8cJecymP34l6mTdhrAFOGFSilTZLFPqCU_7ljMkOcqw8aw9ACCV1tABKy-K4-Jg7iuN14D9ZxcCkpLQuoyscNUu6dpYc_XmDxz3fkIw0zSfLQpqdBlVK9r4oBgR03jZ23X_R_2w4TQGq-_KtNHXzh1lYUhPtinq3RU5aPl6mxMCIeKJ8hD-CQ6huPMCNFGQ0D7jN3GYBoU_Y5INA94W6peukvgMmBxEsEqgITcX-OFzz0n93fPjGGOJp0zpuBFamBVrtMQRC09dF1khKOZoSPW4b-sCpjDlcsCR6EyQ4yKG7fbZP5TigoGGC_TAThzmfCBO8aMdOGRg1EiB-d17gfoJQB-3YAYg4ADk3vVuOLCBkVrUBabXz3mH6NVPHptp4Z8oE7WsINXnP2IlZMYWCSQFbw5F_ZxGUjJeVFSzge2O2THh4vDUXU95-XTImDnpEW4HDKPB4e_hzeRWQpkNI-zFY31kT6pGDnAoH3YAQP7mdtDCNj5IxbzFUAsImzFQcCWiy1yVJ6HswziDp8LtpB0dOJZ9balf8I93G8kokj7TZPSOXd1Eodoo2M0T5k557RLRii_1dcLu3o3d83x9NfCW-Us9JrGTFM4gmcjjyVwOi_SWXJcnIW5jp_KOk4k8eOern0Pf0KJgKacRjoiAbCUz8Hx0wwtU6cnHdaCtQXF3fDio%3D&p=9NwGV8Ov71o%3DgW5NEpb6rjb84bkaCQyOq-myT0C-Ktb_pYgxM135XoUfaIpfBqAxRGnFAl1k71C_zMPfUdFlHJTcuxYW9LgBCdTzuda7fnA8r2K-D8AqSYWzt-6LIEcC8SPkaeAgjjv1iCeYI_yckjGbVxJEy1xSQc4qp-_g8cJecymP34l6mTdhrAFOGFSilTZLFPqCU_7ljMkOcqw8aw9ACCV1tABKy-K4-Jg7iuN14D9ZxcCkpLQuoyscNUu6dpYc_XmDxz3fkIw0zSfLQpor5agNGowUyuHbsIzhdm6WhN2wNFKZLjRizDkXEbs3gbKyRhCNXWcaWxpCiVIKGuj3c2v1_472zKwyruTqrEFAqCa9mUNPFvdEoCQHSgLvmdiChZkyzatXxxEwu8Q5j_af_maRy2HXIIhK630WtYPczjKNxg6Cos_GcauqQIpL_7CBuF4vo3xoYwZgr85twvaTlImJkvmnWJxoDjS59jQf1HzEb7EnnIRqJB8Sa8ij9vbxlLlxG-ormo2NuxMYzHZy7zftRRcQum2f-veKIYz4RV5FOjcH5iStKgZWnEkqpZDeV-xi9Du019l8u9Vs4nEsBuaFkGaWLBCkLs7ybh2a_XBxPr1pf41hULpcrn5L10cvwhfOkaQlTO_kl34jYxWlBfZ0NEDyB8qORGhHaguBZn567UFGh_sXkbYoB5tCDRx0muMu07-IK77iiu59DdQ8JE2edQySpD9704w4LyxiU6Sd1jEQzZzqkG2GEG7Uns07-cnGnA79VW9bGZih-IUyNklesUyhqGssaSn6y5xICtofLaQVCISJFUTRFBrAwYHKMYNCzgJWn_186E5GxA8%3D&p=9NwGV8Ov71o%3DgW5NEpb6rjb84bkaCQyOq-myT0C-Ktb_pYg'
-  
-  Object.keys(YouthBody).forEach((item) =>{
-    if (YouthBody[item]) {
-      ReadArr.push(YouthBody[item])
-    }
-  })
-    timeZone = new Date().getTimezoneOffset() / 60;
-    timestamp = Date.now()+ (8+timeZone) * 60 * 60 * 1000;
-    bjTime = new Date(timestamp).toLocaleString('zh',{hour12:false,timeZoneName: 'long'});
-    console.log(`\n === 脚本执行 ${bjTime} ===\n`);
-  $.log("\n  您共获取"+ReadArr.length+"次阅读请求，任务开始\n")
-}
-      
+let ReadArr = [], YouthBody = "",readscore = 0;
+
+  YouthBody = headers.split('&');
+  Object.keys(YouthBody).forEach((item) => {
+        if (YouthBody[item]) {
+          ReadArr.push(YouthBody[item])
+        }
+    })
+      console.log(`============ 脚本执行-国际标准时间(UTC)：${new Date().toLocaleString()}  =============\n`)
+      console.log(`============ 脚本执行-北京时间(UTC+8)：${new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toLocaleString()}  =============\n`)
+
  !(async () => {
   if (!ReadArr[0]) {
     console.log($.name, '【提示】请把抓包的请求体填入Github 的 Secrets 中，请以&隔开')
     return;
   }
 
-let indexLast = $.getdata('zqbody_index');
- $.begin = indexLast ? parseInt(indexLast,10) : 1;
- $.index = 0;
- $.log( "上次运行到第"+$.begin+"次终止，本次从"+(parseInt($.begin)+1)+"次开始");
-  for ( var i = indexLast ? indexLast:0; i < ReadArr.length; i++) {
-    if (ReadArr[i]) {
-      articlebody = ReadArr[i];
-       $.index =  $.index + 1;
-       $.log(`-------------------------\n\n开始中青看点第${$.index}次阅读`);
-       await $.wait(10000);
-       await AutoRead();
-    };
- }
-   $.log("本次共阅读"+artsnum+"次资讯，共获得"+readscore+"青豆\n观看"+videosnum+"次视频，获得"+videoscore+"青豆(不含0青豆次数)\n")
-   console.log(`-------------------------\n\n中青看点共完成${$.index}次阅读，共计获得${readscore+videoscore}个青豆，阅读请求全部结束`);
-   $.msg($.name, `本次运行共完成${$.index}次阅读，共计获得${readscore+videoscore}个青豆`)
+  while(true){
+    for (let i = 0; i < ReadArr.length; i++) {
+
+    try {
+      if (ReadArr[i]) {
+        articlebody = ReadArr[i];
+        $.index = i + 1;
+        console.log(`-------------------------\n\n开始中青看点第${$.index}次阅读`)
+      }
+        await AutoRead();
+     }catch(e){ }
+
+   }
+     console.log(`-------------------------\n\n中青看点共完成${$.index}次阅读，共计获得${readscore}个青豆，阅读请求全部结束`)
+  }
+
 })()
   .catch((e) => $.logErr(e))
   .finally(() => $.done())
 
 
 function AutoRead() {
-  return new Promise((resolve, reject) =>{
-    $.post(batHost('article/complete.json', articlebody), async(error, response, data) =>{
-      let readres = JSON.parse(data);
-      // $.log(JSON.stringify(readres,null,2))
-      $.begin=$.begin+1;
-      let res=$.begin%ReadArr.length
-      $.setdata(res+"", 'zqbody_index');
-      if (readres.error_code == '0' && data.indexOf("read_score") > -1 && readres.items.read_score > 0) {
-        console.log(`\n本次阅读获得${readres.items.read_score}个青豆，请等待30s后执行下一次阅读\n`);
-        if(data.indexOf("ctype")>-1){
-         if(readres.items.ctype==0){
-          artsnum += 1
-          readscore += parseInt(readres.items.read_score);
-         } else if(readres.items.ctype==3){
-          videosnum += 1
-          videoscore += parseInt(readres.items.read_score);
-         } 
-        }
-        if ($.index % 2 == 0) {
-          if ($.isNode() && process.env.YOUTH_ATIME) {
-            timebodyVal = process.env.YOUTH_ATIME;
-          } else {
-            timebodyVal = $.getdata('autotime_zq');
-          }
-          await readTime()
+    return new Promise((resolve, reject) => {
+       let url = {
+            url: `https://ios.baertt.com/v5/article/complete.json`,
+            headers: {
+            'User-Agent': 'KDApp/1.7.8 (iPhone; iOS 14.0; Scale/3.00)'
+            },
+            body: articlebody
         };
-        if($.index==ReadArr.length){
-        $.log($.index+"次任务已全部完成，即将结束")
-        } else {
-        await $.wait(20000);
-        }
-      } else if (readres.error_code == '0' && data.indexOf('"score":0') > -1 && readres.items.score == 0) {
-        console.log(`\n本次阅读获得0个青豆，等待10s即将开始下次阅读\n`);
-      } else if (readres.success == false) {
-        console.log(`第${$.index}次阅读请求有误，请删除此请求`)
-      } else if (readres.items.max_notice == '\u770b\u592a\u4e45\u4e86\uff0c\u63621\u7bc7\u8bd5\u8bd5') {
-        console.log(readres.items.max_notice)
-      }
-      resolve()
-    })
-  })
-}
+        $.post(url, async(error, response, data) => {
 
-function batHost(api, body) {
-    return {
-        url: 'https://ios.baertt.com/v5/'+api,
-        headers: {
-            'User-Agent': 'KDApp/2.0.0 (iPhone; iOS 14.5; Scale/3.00)',
-            'Host': 'ios.baertt.com',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: body
-    }
-}
-
-function readTime() {
-  return new Promise((resolve, reject) => {
-        $.post(batHost('user/stay.json',timebodyVal), (error, resp, data) => {
-            let timeres = JSON.parse(data)
-            if (timeres.error_code == 0) {
-                readtimes = timeres.time / 60
-              $.log(`阅读时长共计` + Math.floor(readtimes) + `分钟`)
+         try {
+            let readres = JSON.parse(data);
+             //console.log(data)
+           if (readres.error_code == '0' && typeof readres.items.read_score === 'number') {
+              console.log(`\n本次阅读获得${readres.items.read_score}个青豆，请等待30s后执行下一次阅读\n`);
+              readscore += readres.items.read_score;
+              await $.wait(30000);
             }
-            resolve()
+            else if (readres.error_code == '0' && typeof readres.items.score === 'number') {
+              console.log(`\n本次阅读获得${readres.items.score}个青豆，即将开始下次阅读\n`)
+              readscore += readres.items.score
+            }
+            else if (readres.success == false){
+              console.log(`第${$.index}次阅读请求有误，请删除此请求`)
+            }
+            else if (readres.items.max_notice == '\u770b\u592a\u4e45\u4e86\uff0c\u63621\u7bc7\u8bd5\u8bd5') {
+              console.log(readres.items.max_notice)
+            }
+         }catch(e){ }finally{resolve()}
+
         })
     })
 }
-
-function Getbody() {
-  if ($request && $request.method != `OPTIONS` && $request.url.match(/\/article\/info\/get/)) {
-    bodyVal = $request.url.split("?")[1];
-    if (YouthBody) {
-      if (YouthBody.indexOf(bodyVal) > -1) {
-        $.log("此阅读请求已存在，本次跳过")
-      } else if (YouthBody.indexOf(bodyVal) == -1) {
-        YouthBodys = YouthBody + "&" + bodyVal;
-        $.setdata(YouthBodys, 'youth_autoread');
-        $.log(`${$.name}获取阅读: 成功, YouthBodys: ${bodyVal}`);
-        bodys = YouthBodys.split("&")
-        $.msg($.name, "获取第"+bodys.length+"个阅读请求: 成功🎉", ``)
-      }
-    } else {
-      $.setdata(bodyVal, 'youth_autoread');
-      $.log(`${$.name}获取阅读: 成功, YouthBodys: ${bodyVal}`);
-      $.msg($.name, `获取第一个阅读请求: 成功🎉`, ``)
-    }
-  } else if($request&&$request.method!=`OPTIONS`&&$request.url.match(/\/v5\/user\/stay/)){
-      const timebodyVal=$request.body;
-      if(timebodyVal)           $.setdata(timebodyVal,'autotime_zq');
-   $.log(`${$.name}获取阅读时长: 成功, timebodyVal: ${timebodyVal}`);
-   $.msg($.name,`获取阅读时长: 成功🎉`,``)
- }
-}
-
 
 function Env(t,e){class s{constructor(t){this.env=t}send(t,e="GET"){t="string"==typeof t?{url:t}:t;let s=this.get;return"POST"===e&&(s=this.post),new Promise((e,i)=>{s.call(this,t,(t,s,r)=>{t?i(t):e(s)})})}get(t){return this.send.call(this.env,t)}post(t){return this.send.call(this.env,t,"POST")}}return new class{constructor(t,e){this.name=t,this.http=new s(this),this.data=null,this.dataFile="box.dat",this.logs=[],this.isMute=!1,this.isNeedRewrite=!1,this.logSeparator="\n",this.startTime=(new Date).getTime(),Object.assign(this,e),this.log("",`\ud83d\udd14${this.name}, \u5f00\u59cb!`)}isNode(){return"undefined"!=typeof module&&!!module.exports}isQuanX(){return"undefined"!=typeof $task}isSurge(){return"undefined"!=typeof $httpClient&&"undefined"==typeof $loon}isLoon(){return"undefined"!=typeof $loon}toObj(t,e=null){try{return JSON.parse(t)}catch{return e}}toStr(t,e=null){try{return JSON.stringify(t)}catch{return e}}getjson(t,e){let s=e;const i=this.getdata(t);if(i)try{s=JSON.parse(this.getdata(t))}catch{}return s}setjson(t,e){try{return this.setdata(JSON.stringify(t),e)}catch{return!1}}getScript(t){return new Promise(e=>{this.get({url:t},(t,s,i)=>e(i))})}runScript(t,e){return new Promise(s=>{let i=this.getdata("@chavy_boxjs_userCfgs.httpapi");i=i?i.replace(/\n/g,"").trim():i;let r=this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");r=r?1*r:20,r=e&&e.timeout?e.timeout:r;const[o,h]=i.split("@"),a={url:`http://${h}/v1/scripting/evaluate`,body:{script_text:t,mock_type:"cron",timeout:r},headers:{"X-Key":o,Accept:"*/*"}};this.post(a,(t,e,i)=>s(i))}).catch(t=>this.logErr(t))}loaddata(){if(!this.isNode())return{};{this.fs=this.fs?this.fs:require("fs"),this.path=this.path?this.path:require("path");const t=this.path.resolve(this.dataFile),e=this.path.resolve(process.cwd(),this.dataFile),s=this.fs.existsSync(t),i=!s&&this.fs.existsSync(e);if(!s&&!i)return{};{const i=s?t:e;try{return JSON.parse(this.fs.readFileSync(i))}catch(t){return{}}}}}writedata(){if(this.isNode()){this.fs=this.fs?this.fs:require("fs"),this.path=this.path?this.path:require("path");const t=this.path.resolve(this.dataFile),e=this.path.resolve(process.cwd(),this.dataFile),s=this.fs.existsSync(t),i=!s&&this.fs.existsSync(e),r=JSON.stringify(this.data);s?this.fs.writeFileSync(t,r):i?this.fs.writeFileSync(e,r):this.fs.writeFileSync(t,r)}}lodash_get(t,e,s){const i=e.replace(/\[(\d+)\]/g,".$1").split(".");let r=t;for(const t of i)if(r=Object(r)[t],void 0===r)return s;return r}lodash_set(t,e,s){return Object(t)!==t?t:(Array.isArray(e)||(e=e.toString().match(/[^.[\]]+/g)||[]),e.slice(0,-1).reduce((t,s,i)=>Object(t[s])===t[s]?t[s]:t[s]=Math.abs(e[i+1])>>0==+e[i+1]?[]:{},t)[e[e.length-1]]=s,t)}getdata(t){let e=this.getval(t);if(/^@/.test(t)){const[,s,i]=/^@(.*?)\.(.*?)$/.exec(t),r=s?this.getval(s):"";if(r)try{const t=JSON.parse(r);e=t?this.lodash_get(t,i,""):e}catch(t){e=""}}return e}setdata(t,e){let s=!1;if(/^@/.test(e)){const[,i,r]=/^@(.*?)\.(.*?)$/.exec(e),o=this.getval(i),h=i?"null"===o?null:o||"{}":"{}";try{const e=JSON.parse(h);this.lodash_set(e,r,t),s=this.setval(JSON.stringify(e),i)}catch(e){const o={};this.lodash_set(o,r,t),s=this.setval(JSON.stringify(o),i)}}else s=this.setval(t,e);return s}getval(t){return this.isSurge()||this.isLoon()?$persistentStore.read(t):this.isQuanX()?$prefs.valueForKey(t):this.isNode()?(this.data=this.loaddata(),this.data[t]):this.data&&this.data[t]||null}setval(t,e){return this.isSurge()||this.isLoon()?$persistentStore.write(t,e):this.isQuanX()?$prefs.setValueForKey(t,e):this.isNode()?(this.data=this.loaddata(),this.data[e]=t,this.writedata(),!0):this.data&&this.data[e]||null}initGotEnv(t){this.got=this.got?this.got:require("got"),this.cktough=this.cktough?this.cktough:require("tough-cookie"),this.ckjar=this.ckjar?this.ckjar:new this.cktough.CookieJar,t&&(t.headers=t.headers?t.headers:{},void 0===t.headers.Cookie&&void 0===t.cookieJar&&(t.cookieJar=this.ckjar))}get(t,e=(()=>{})){t.headers&&(delete t.headers["Content-Type"],delete t.headers["Content-Length"]),this.isSurge()||this.isLoon()?(this.isSurge()&&this.isNeedRewrite&&(t.headers=t.headers||{},Object.assign(t.headers,{"X-Surge-Skip-Scripting":!1})),$httpClient.get(t,(t,s,i)=>{!t&&s&&(s.body=i,s.statusCode=s.status),e(t,s,i)})):this.isQuanX()?(this.isNeedRewrite&&(t.opts=t.opts||{},Object.assign(t.opts,{hints:!1})),$task.fetch(t).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>e(t))):this.isNode()&&(this.initGotEnv(t),this.got(t).on("redirect",(t,e)=>{try{if(t.headers["set-cookie"]){const s=t.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();this.ckjar.setCookieSync(s,null),e.cookieJar=this.ckjar}}catch(t){this.logErr(t)}}).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>{const{message:s,response:i}=t;e(s,i,i&&i.body)}))}post(t,e=(()=>{})){if(t.body&&t.headers&&!t.headers["Content-Type"]&&(t.headers["Content-Type"]="application/x-www-form-urlencoded"),t.headers&&delete t.headers["Content-Length"],this.isSurge()||this.isLoon())this.isSurge()&&this.isNeedRewrite&&(t.headers=t.headers||{},Object.assign(t.headers,{"X-Surge-Skip-Scripting":!1})),$httpClient.post(t,(t,s,i)=>{!t&&s&&(s.body=i,s.statusCode=s.status),e(t,s,i)});else if(this.isQuanX())t.method="POST",this.isNeedRewrite&&(t.opts=t.opts||{},Object.assign(t.opts,{hints:!1})),$task.fetch(t).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>e(t));else if(this.isNode()){this.initGotEnv(t);const{url:s,...i}=t;this.got.post(s,i).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>{const{message:s,response:i}=t;e(s,i,i&&i.body)})}}time(t){let e={"M+":(new Date).getMonth()+1,"d+":(new Date).getDate(),"H+":(new Date).getHours(),"m+":(new Date).getMinutes(),"s+":(new Date).getSeconds(),"q+":Math.floor(((new Date).getMonth()+3)/3),S:(new Date).getMilliseconds()};/(y+)/.test(t)&&(t=t.replace(RegExp.$1,((new Date).getFullYear()+"").substr(4-RegExp.$1.length)));for(let s in e)new RegExp("("+s+")").test(t)&&(t=t.replace(RegExp.$1,1==RegExp.$1.length?e[s]:("00"+e[s]).substr((""+e[s]).length)));return t}msg(e=t,s="",i="",r){const o=t=>{if(!t)return t;if("string"==typeof t)return this.isLoon()?t:this.isQuanX()?{"open-url":t}:this.isSurge()?{url:t}:void 0;if("object"==typeof t){if(this.isLoon()){let e=t.openUrl||t.url||t["open-url"],s=t.mediaUrl||t["media-url"];return{openUrl:e,mediaUrl:s}}if(this.isQuanX()){let e=t["open-url"]||t.url||t.openUrl,s=t["media-url"]||t.mediaUrl;return{"open-url":e,"media-url":s}}if(this.isSurge()){let e=t.url||t.openUrl||t["open-url"];return{url:e}}}};this.isMute||(this.isSurge()||this.isLoon()?$notification.post(e,s,i,o(r)):this.isQuanX()&&$notify(e,s,i,o(r)));let h=["","==============\ud83d\udce3\u7cfb\u7edf\u901a\u77e5\ud83d\udce3=============="];h.push(e),s&&h.push(s),i&&h.push(i),console.log(h.join("\n")),this.logs=this.logs.concat(h)}log(...t){t.length>0&&(this.logs=[...this.logs,...t]),console.log(t.join(this.logSeparator))}logErr(t,e){const s=!this.isSurge()&&!this.isQuanX()&&!this.isLoon();s?this.log("",`\u2757\ufe0f${this.name}, \u9519\u8bef!`,t.stack):this.log("",`\u2757\ufe0f${this.name}, \u9519\u8bef!`,t)}wait(t){return new Promise(e=>setTimeout(e,t))}done(t={}){const e=(new Date).getTime(),s=(e-this.startTime)/1e3;this.log("",`\ud83d\udd14${this.name}, \u7ed3\u675f! \ud83d\udd5b ${s} \u79d2`),this.log(),(this.isSurge()||this.isQuanX()||this.isLoon())&&$done(t)}}(t,e)}
