@@ -24,7 +24,7 @@ jobs:
         run: |
           npm install
           
-      - name: '运行 【中青看点自动阅读一】
+      - name: '运行 【中青看点自动阅读一】 
         run: |
           node Task/Youth_Read.js
         env:
