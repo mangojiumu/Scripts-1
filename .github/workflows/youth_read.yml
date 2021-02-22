@@ -1,12 +1,12 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# 每日早9点到晚8点每2小时运行一次
+
 
 name: 中青自动阅读
 
 on:
   workflow_dispatch:
   schedule:
-     - cron: '6 1-16/3 * * *'
+     - cron: '6 */6 * * *'
   watch:
     types: started
 jobs:
