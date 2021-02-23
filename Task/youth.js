@@ -224,7 +224,7 @@ function getsign() {
         })
     })
 }
-      
+ /*    
 function getArt() {
   return new Promise((resolve, reject) =>{
     $.post(kdHost('WebApi/ArticleTop/listsNewTag'), async(error, resp, data) =>{
@@ -246,7 +246,7 @@ function getArt() {
     })
   })
 }
-
+*/
 function artshare(artsid) {
   return new Promise((resolve, reject) =>{
     $.post(kdHost('WebApi/ShareNew/getShareArticleReward', cookie + "&" + "article_id=" + artsid), async(error, resp, data) =>{
