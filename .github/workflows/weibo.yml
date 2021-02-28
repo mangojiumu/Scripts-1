@@ -1,5 +1,5 @@
 
-name: weibo
+name: 微博
 
 on:
   workflow_dispatch:
