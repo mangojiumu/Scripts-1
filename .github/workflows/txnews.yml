@@ -4,12 +4,12 @@
 #   branches: 
 #   - master 
 
-name: txnews腾讯新闻
+name: 腾讯新闻
 
 on:
   workflow_dispatch:
   schedule:
-     - cron: '*/6 * * * *'
+     - cron: '*/5 * * * *'
   watch:
      types: started
 jobs:
