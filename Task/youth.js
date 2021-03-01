@@ -9,7 +9,7 @@ let withdrawBody = $.getdata('cashbody_zq');
 let cookieYouth = $.getdata('youthheader_zq');
 let ARTBODYs = $.getdata('read_zq');
 let READTIME = $.getdata('readtime_zq');
-let cardTime = $.getdata('zqtime')||"06";//打卡时间
+let cardTime = $.getdata('zqtime')||"23";//打卡时间
 let rotaryscore=0,doublerotary=0; 
 
 let cookieArr = [], cookie = '',
