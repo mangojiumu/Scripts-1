@@ -47,7 +47,10 @@ if(!$.isNode()&&cookieYouth.indexOf("#") ==-1){
    cookieYouth = cookieYouth.split("#")
    ARTBODYs = ARTBODYs.split("&")
    READTIME = READTIME.split("&")
-};
+}
+withdrawUrl='https://ios.baertt.com/v5/wechat/withdraw2.json';
+withdrawBody='p=9NwGV8Ov71o%3DgW5NEpb6rjb84bkaCQyOq-myT0C-Ktb_pYgxM135XoUfaIpfBqAxRGnFAl1k71C_zMPfUdFlHJTcuxYW9LgBCdTzuda7fnA8r2K-D8AqSYWzt-6LIEcC8SPkaeAgjjv1iCeYI_yckjGbVxJEy1xSQc4qp-_g8cJecymP34l6mTdhrAFOGFSilTZLFPqCU_7ljMkOcqw8aw9ACCV1tABKy-K4-Jg7iuN14D9ZxcCkpLQuoyscNUu6dpYc_XmDxz3fHrskZgTDKB-2gLPbM8ZYfJypwXE2d46Wfgh45qGemikF0xfn7SlptEgJprs4qnUxQDZOAhtcKW5t-JRfg1cDuiHU1_3FUhoFlamkdyER-U6QjoPnubiRMstLUk8L1YIdoYX2z-VkDXo3_ciqrgkmiYN5pfXf1U-Eik7GnuBJe7tQMQmwU5MFauRxBk2Mf0rBohcdMotbmngivVTrhTiizUq22m91k0o9BhJ1bq-BZ3PeNgU4Mc5GotZNvbDJiyvljrcQRee1CG9NcsBpE3syik_eWHr8Q3iMdgCUKVTD7Hz_08ICCCbWD8ufluAWreEoI5EiPEzY3M5W40kSZ8wbctPuHPTjKVouMwHw6IPZW6ts02DPXMyY-8JWLuqfvcU_BcwhX7Tsc_AFri66gbDiSdQZNZ1Ll7icKH5fpf8eXUshE7Qt3ZZDq48okZAoKSuu2UT5gM_I0Oedc6TYFtC8GfMDmznLNlVNRU_qNpm5mat9CdjAT34TGTrCJvGEoC9I9WVU4P8fbXqpgx-qr7PNJu_2VhSqnFrJ45LbcySClsgbTzk62Kxu0akps-k2hl-T';
+;
     Object.keys(cookieYouth).forEach((item) =>{
         if (cookieYouth[item]) {
         cookieArr.push(cookieYouth[item])
