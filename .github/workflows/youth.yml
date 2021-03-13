@@ -19,6 +19,9 @@ jobs:
         YOUTH_ARTBODY: ${{ secrets.YOUTH_ARTBODY }}
         YOUTH_REDBODY: ${{ secrets.YOUTH_REDBODY }}
         YOUTH_TIME: ${{ secrets.YOUTH_TIME }}
+        WITHDRAW_URL: ${{ secrets.WITHDRAW_URL }}
+        WITHDRAW_BODY: ${{ secrets.WITHDRAW_BODY }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
